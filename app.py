@@ -1,0 +1,1 @@
+print("AI-Based Medical Image Classification Assistant")
