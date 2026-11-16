@@ -111,8 +111,11 @@ uploadArea.addEventListener("drop", (event) => {
 });
 
 // Frontend demonstration only — no AI model is called here.
-uploadForm.addEventListener("submit", (event) => {
+
+// Connect frontend to Flask AI prediction API
+uploadForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+
     errorMessage.textContent = "";
     resultSection.hidden = true;
 
@@ -127,18 +130,63 @@ uploadForm.addEventListener("submit", (event) => {
         return;
     }
 
-    document.getElementById("predicted-class").textContent =
-        "Awaiting backend integration";
+    const submitButton = uploadForm.querySelector(
+        'button[type="submit"]'
+    );
 
-    document.getElementById("confidence-score").textContent =
-        "Not available";
+    const originalButtonText = submitButton
+        ? submitButton.textContent
+        : "";
 
-    resultSection.hidden = false;
-    resultSection.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-    });
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Analyzing...";
+    }
+
+    try {
+        const formData = new FormData();
+
+        formData.append("image", selectedImage);
+
+        const response = await fetch("/predict", {
+            method: "POST",
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                result.error || "Image prediction failed."
+            );
+        }
+
+        document.getElementById("predicted-class").textContent =
+            result.prediction;
+
+        document.getElementById("confidence-score").textContent =
+            result.confidence + "%";
+
+        resultSection.hidden = false;
+
+        resultSection.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+    } catch (error) {
+        showError(
+            error.message || "Unable to connect to the prediction server."
+        );
+
+    } finally {
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
+        }
+    }
 });
+
 
 
 
