@@ -1,1 +1,15 @@
-print("AI-Based Medical Image Classification Assistant")
+
+from flask import Flask, render_template
+from database.database import initialize_database
+
+app = Flask(__name__)
+
+# Initialize the database
+initialize_database()
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+if __name__ == "__main__":
+    app.run(debug=True)
