@@ -147,6 +147,7 @@ uploadForm.addEventListener("submit", async (event) => {
         const formData = new FormData();
 
         formData.append("image", selectedImage);
+        formData.append("image_type", imageType.value);
 
         const response = await fetch("/predict", {
             method: "POST",
