@@ -216,3 +216,11 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# Local SQLite database
+database/*.db
+
+# Uploaded medical images
+static/uploads/*
+!static/uploads/.gitkeep
