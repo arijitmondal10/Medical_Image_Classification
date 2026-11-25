@@ -224,3 +224,17 @@ database/*.db
 # Uploaded medical images
 static/uploads/*
 !static/uploads/.gitkeep
+
+# Dataset - keep locally, don't upload to GitHub
+dataset/raw/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+.env
+
+# Local database
+database/*.db
