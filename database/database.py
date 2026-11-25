@@ -1,17 +1,23 @@
 import sqlite3
+import os
 from pathlib import Path
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # Project directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Database file path
-DATABASE_PATH = BASE_DIR / "database" / "medical_images.db"
+# Detect Vercel environment
+IS_VERCEL = os.environ.get("VERCEL") == "1"
 
-# Upload directory
-UPLOAD_FOLDER = BASE_DIR / "static" / "uploads"
+# Database path
+if IS_VERCEL:
+    DATABASE_PATH = Path("/tmp/medical_images.db")
+    UPLOAD_FOLDER = Path("/tmp/uploads")
+else:
+    DATABASE_PATH = BASE_DIR / "database" / "medical_images.db"
+    UPLOAD_FOLDER = BASE_DIR / "static" / "uploads"
 
-# Create upload directory if it does not exist
+# Create upload directory
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 
 
@@ -21,7 +27,6 @@ def get_connection():
     connection.row_factory = sqlite3.Row
     connection.execute("PRAGMA foreign_keys = ON")
     return connection
-
 
 # Initialize database tables
 def initialize_database():
